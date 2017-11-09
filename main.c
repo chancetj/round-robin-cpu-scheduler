@@ -28,6 +28,10 @@ int main() {
     }
     printf(isPrime(input) == 1 ? "Yes" : "No");
 
+    printf("\nNext is: %d", getNextPrimeNumberAfter(input));
+
+    printPrimeNumbers(5);
+
     getchar();
 
     return 0;
@@ -112,7 +116,7 @@ int printPrimeNumbers(int lastPrimeNumberPrinted) {
     // the next prime number and printing it.
     while (numberOfPrimesPrinted < 4000) {
         // Print the next prime number after the last printed prime number.
-        printf("%4d", getNextPrimeNumberAfter(lastPrimeNumberPrinted));
+        printf("\n%5d", getNextPrimeNumberAfter(lastPrimeNumberPrinted));
 
         // The last printed prime number is now the prime number that was just printed
         // which is the next prime number after the last prime number printed.
