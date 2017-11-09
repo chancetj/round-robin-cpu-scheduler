@@ -30,36 +30,56 @@ int main() {
 
     printf("\nNext is: %d", getNextPrimeNumberAfter(input));
 
-    printPrimeNumbers(5);
+    // printPrimeNumbers(5);
+
+    printf("\n");
+
+    readProcessControlBlocks();
 
     getchar();
 
     return 0;
 }
 
+// Struct for the process control blocks
+struct pcb {
+    int processId;
+    char processState[20];
+    int processPriority;
+    int processTime;
+};
 
+
+// This array of pcbs serves as our "Ready Queue"
+struct pcb processControlBlocks[4];
 
 /*
  This function reads the text file to get information about the PCBs
  */
-/*
+
 void readProcessControlBlocks() {
     //  Open our file containing the process control blocks for reading.
     FILE *fp;
-    // fopen_s(&fp, "filenamehere.txt", "r");
     char tempLine[100]; // Temp variable used for reading in the PCBs
 
     if ((fp = (FILE *) (fopen("list_of_processes.rtf", "r") == (NULL)))) {
-        printf("ERROR: Could not open file. \n");
+        printf("ERROR: Could not open file.\n");
         return;
     }
     while ( fgets(tempLine, sizeof(tempLine), fp) ) {
-        sscanf(tempLine, "%d %24[^\n] %19s %119[^\n]", pcb.processId, pcb.processState, pcb.processPriority, pcb.processTime);
+        int i = 0;
+        sscanf(tempLine, "%d %24[^\n] %19s %119[^\n]", processControlBlocks[i].processId,
+               processControlBlocks[i].processState, processControlBlocks[i].processPriority, processControlBlocks[i].processTime);
+        i = i + 1;
+
+        printf(tempLine);
     }
+
+    printf("%s", (char *) processControlBlocks[0].processId);
     // else {
     // fscanf(fp, "%s", buff);
 }
-*/
+
 
 
 
