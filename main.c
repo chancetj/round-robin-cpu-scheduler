@@ -20,7 +20,7 @@ struct pcb {
 
 // This array of pcbs serves as our "Ready Queue"
 struct pcb processControlBlocks[4];
-// Output text file
+
 FILE * output;
 
 void readProcessControlBlocks();
@@ -34,15 +34,27 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]);
  */
 int main() {
 
+    output = fopen("output.txt", "a");
+    if (output == NULL)
+    {
+        printf("\nError opening output file.");
+    }
+
     printf("This program simulates the Round Robin CPU Scheduler with the help of prime numbers.");
+    fprintf(output, "This program simulates the Round Robin CPU Scheduler with the help of prime numbers.");
     printf("\nThere will be a total of 44,000 prime numbers printed after all processes have run.");
+    fprintf(output, "\nThere will be a total of 44,000 prime numbers printed after all processes have run.");
     printf("\nPress any key to watch, wait, and see...");
+    fprintf(output, "\nPress any key to watch, wait, and see...");
     getchar();
     printf("\nEnjoy the ride :)");
+    fprintf(output, "\nEnjoy the ride :)");
 
     readProcessControlBlocks();
 
     roundRobinScheduler(processControlBlocks);
+
+    fclose(output);
 
     getchar();
     getchar();
@@ -58,7 +70,6 @@ void readProcessControlBlocks() {
     //  Open our file containing the process control blocks for reading.
 
     FILE * fp;
-    // fp = fopen("processes.txt", "r");
 
 
     int currentLine = 0;
@@ -73,16 +84,17 @@ void readProcessControlBlocks() {
                    &processControlBlocks[currentLine].processPriority, &processControlBlocks[currentLine].processTime);
 
             printf("\nProcess %s", tempLine);
+            fprintf(output, "\nProcess %s", tempLine);
             currentLine++;
         }
     }
     else {
         printf("\nERROR: Could not open file.\n");
+        fprintf(output, "\nERROR: Could not open file.\n");
         return;
     }
 
     fclose(fp);
-
 }
 
 
@@ -133,7 +145,7 @@ int getNextPrimeNumberAfter(int n) {
  */
 int printPrimeNumbers(int lastPrimeNumberPrinted) {
     int numberOfPrimesPrinted;
-    fopen("output.txt", "w");
+    // fopen("output.txt", "w");
 
     // Until we have printed 4,000 prime numbers, we need to keep getting
     // the next prime number and printing it.
@@ -148,7 +160,6 @@ int printPrimeNumbers(int lastPrimeNumberPrinted) {
         numberOfPrimesPrinted++;
     }
     return lastPrimeNumberPrinted;
-
 }
 
 
@@ -161,6 +172,7 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]) {
     int lastPrimeNumberPrinted = 0;
     int completedProcesses = 0;
     int i;
+    //fopen("output.txt", "a");
 
     while (1) {
         for(i = 0; i <= 4; i = (i + 1) % 4) {
@@ -169,6 +181,7 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]) {
             if ( processControlBlocks[i].processTime != 0 ) {
                 // Run the process
                 printf("\nPROCESS %d BEGINS", processControlBlocks[i].processId);
+                fprintf(output, "\nPROCESS %d BEGINS", processControlBlocks[i].processId);
                 // Keep track of the last printed prime number
                 lastPrimeNumberPrinted = printPrimeNumbers(lastPrimeNumberPrinted);
                 // Subtract a time slice from the process that just ran
@@ -179,11 +192,13 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]) {
             if ( (processControlBlocks[i].processTime == 0) &&
                     (processControlBlocks[i].processState != "Terminated") )  {
                 printf("\nPROCESS %d IS FINISHED", processControlBlocks[i].processId);
+                fprintf(output, "\nPROCESS %d IS FINISHED", processControlBlocks[i].processId);
                 strcpy(processControlBlocks[i].processState, "Terminated");
                 completedProcesses++;
             }
             else if ( processControlBlocks[i].processTime > 0 ) {
                 printf("\nPROCESS %d IS PAUSED", processControlBlocks[i].processId);
+                fprintf(output, "\nPROCESS %d IS PAUSED", processControlBlocks[i].processId);
             }
 
             // If all processes are complete. Exit the loop.
@@ -193,6 +208,7 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]) {
 
         }
         printf("\nALL PROCESSES COMPLETE.");
+        fprintf(output, "\nALL PROCESSES COMPLETE.");
         break;
     }
 }
