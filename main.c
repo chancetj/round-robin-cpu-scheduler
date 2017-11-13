@@ -9,78 +9,81 @@
 #include <ctype.h>
 #include <string.h>
 
+// Struct for the process control blocks
+struct pcb {
+    int processId;
+    char processState[20];
+    int processLocation;
+    int processPriority;
+    int processTime;
+};
+
+// This array of pcbs serves as our "Ready Queue"
+struct pcb processControlBlocks[4];
+// Output text file
+FILE * output;
 
 void readProcessControlBlocks();
 int isPrime(int n);
 int getNextPrimeNumberAfter(int n);
+void roundRobinScheduler(struct pcb processControlBlocks[4]);
+
 
 /*
  Our Main function
  */
 int main() {
-    int input;
 
-    printf("Enter an integer. Enter 0 to exit: ");
-    scanf("%d", &input);
-
-    if (input == 0) {
-        return 0;
-    }
-    printf(isPrime(input) == 1 ? "Yes" : "No");
-
-    printf("\nNext is: %d", getNextPrimeNumberAfter(input));
-
-    // printPrimeNumbers(5);
-
-    printf("\n");
+    printf("This program simulates the Round Robin CPU Scheduler with the help of prime numbers.");
+    printf("\nThere will be a total of 44,000 prime numbers printed after all processes have run.");
+    printf("\nPress any key to watch, wait, and see...");
+    getchar();
+    printf("\nEnjoy the ride :)");
 
     readProcessControlBlocks();
 
+    roundRobinScheduler(processControlBlocks);
+
+    getchar();
     getchar();
 
     return 0;
 }
 
-// Struct for the process control blocks
-struct pcb {
-    int processId;
-    char processState[20];
-    int processPriority;
-    int processTime;
-};
-
-
-// This array of pcbs serves as our "Ready Queue"
-struct pcb processControlBlocks[4];
 
 /*
  This function reads the text file to get information about the PCBs
  */
-
 void readProcessControlBlocks() {
     //  Open our file containing the process control blocks for reading.
-    FILE *fp;
+
+    FILE * fp;
+    // fp = fopen("processes.txt", "r");
+
+
+    int currentLine = 0;
     char tempLine[100]; // Temp variable used for reading in the PCBs
 
-    if ((fp = (FILE *) (fopen("list_of_processes.rtf", "r") == (NULL)))) {
-        printf("ERROR: Could not open file.\n");
+
+    if (fp = fopen("processes.txt", "r")) {
+
+        while ( (fgets(tempLine, sizeof(tempLine), fp) != EOF) && currentLine < 4 ) {
+            sscanf(tempLine, "%d %s %d %d %d", &processControlBlocks[currentLine].processId,
+                   processControlBlocks[currentLine].processState, &processControlBlocks[currentLine].processLocation,
+                   &processControlBlocks[currentLine].processPriority, &processControlBlocks[currentLine].processTime);
+
+            printf("\nProcess %s", tempLine);
+            currentLine++;
+        }
+    }
+    else {
+        printf("\nERROR: Could not open file.\n");
         return;
     }
-    while ( fgets(tempLine, sizeof(tempLine), fp) ) {
-        int i = 0;
-        sscanf(tempLine, "%d %24[^\n] %19s %119[^\n]", processControlBlocks[i].processId,
-               processControlBlocks[i].processState, processControlBlocks[i].processPriority, processControlBlocks[i].processTime);
-        i = i + 1;
 
-        printf(tempLine);
-    }
+    fclose(fp);
 
-    printf("%s", (char *) processControlBlocks[0].processId);
-    // else {
-    // fscanf(fp, "%s", buff);
 }
-
-
 
 
 /*
@@ -108,7 +111,6 @@ int isPrime(int n) {
 /*
  This function gets the next prime number after n.
  */
-
 int getNextPrimeNumberAfter(int n) {
     int next = n+1; // The number after n
 
@@ -131,12 +133,14 @@ int getNextPrimeNumberAfter(int n) {
  */
 int printPrimeNumbers(int lastPrimeNumberPrinted) {
     int numberOfPrimesPrinted;
+    fopen("output.txt", "w");
 
     // Until we have printed 4,000 prime numbers, we need to keep getting
     // the next prime number and printing it.
     while (numberOfPrimesPrinted < 4000) {
         // Print the next prime number after the last printed prime number.
         printf("\n%5d", getNextPrimeNumberAfter(lastPrimeNumberPrinted));
+        fprintf(output, "\n%5d", getNextPrimeNumberAfter(lastPrimeNumberPrinted));
 
         // The last printed prime number is now the prime number that was just printed
         // which is the next prime number after the last prime number printed.
@@ -145,4 +149,50 @@ int printPrimeNumbers(int lastPrimeNumberPrinted) {
     }
     return lastPrimeNumberPrinted;
 
+}
+
+
+/*
+ * This function implements the Round Robin Scheduler Algorithm
+ */
+
+void roundRobinScheduler(struct pcb processControlBlocks[4]) {
+
+    int lastPrimeNumberPrinted = 0;
+    int completedProcesses = 0;
+    int i;
+
+    while (1) {
+        for(i = 0; i <= 4; i = (i + 1) % 4) {
+
+            // If the process is ready and still has time remaining, run that process.
+            if ( processControlBlocks[i].processTime != 0 ) {
+                // Run the process
+                printf("\nPROCESS %d BEGINS", processControlBlocks[i].processId);
+                // Keep track of the last printed prime number
+                lastPrimeNumberPrinted = printPrimeNumbers(lastPrimeNumberPrinted);
+                // Subtract a time slice from the process that just ran
+                processControlBlocks[i].processTime = processControlBlocks[i].processTime - 4;
+            }
+
+            // Determine whether the process is finished or has more time to run
+            if ( (processControlBlocks[i].processTime == 0) &&
+                    (processControlBlocks[i].processState != "Terminated") )  {
+                printf("\nPROCESS %d IS FINISHED", processControlBlocks[i].processId);
+                strcpy(processControlBlocks[i].processState, "Terminated");
+                completedProcesses++;
+            }
+            else if ( processControlBlocks[i].processTime > 0 ) {
+                printf("\nPROCESS %d IS PAUSED", processControlBlocks[i].processId);
+            }
+
+            // If all processes are complete. Exit the loop.
+            if ( completedProcesses == 4 ) {
+                break;
+            }
+
+        }
+        printf("\nALL PROCESSES COMPLETE.");
+        break;
+    }
 }
