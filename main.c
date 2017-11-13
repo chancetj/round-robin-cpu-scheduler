@@ -1,12 +1,15 @@
 /*
- header here
-
-
+ * AUTHOR       :   Chance Johnson
+ * DATE         :   13 November, 2017
+ * COURSE       :   CSCI 415 Intro. to OSs
+ * PROFESSOR    :   Dr. Vipin Menon
+ * SCHOOL       :   McNeese State University
+ * ASSIGNMENT   :   Project 1
+ * FILE         :   main.c
  */
 
 
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
 
 // Struct for the process control blocks
@@ -21,6 +24,7 @@ struct pcb {
 // This array of pcbs serves as our "Ready Queue"
 struct pcb processControlBlocks[4];
 
+// Output file
 FILE * output;
 
 void readProcessControlBlocks();
@@ -30,7 +34,7 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]);
 
 
 /*
- Our Main function
+ Main function
  */
 int main() {
 
@@ -67,15 +71,15 @@ int main() {
  This function reads the text file to get information about the PCBs
  */
 void readProcessControlBlocks() {
-    //  Open our file containing the process control blocks for reading.
 
+    // Point to the file containing the PCBs
     FILE * fp;
 
 
     int currentLine = 0;
     char tempLine[100]; // Temp variable used for reading in the PCBs
 
-
+    //  Open our file containing the PCBs and read them
     if (fp = fopen("processes.txt", "r")) {
 
         while ( (fgets(tempLine, sizeof(tempLine), fp) != EOF) && currentLine < 4 ) {
@@ -144,8 +148,8 @@ int getNextPrimeNumberAfter(int n) {
  the last prime number that it prints.
  */
 int printPrimeNumbers(int lastPrimeNumberPrinted) {
+
     int numberOfPrimesPrinted;
-    // fopen("output.txt", "w");
 
     // Until we have printed 4,000 prime numbers, we need to keep getting
     // the next prime number and printing it.
@@ -166,13 +170,11 @@ int printPrimeNumbers(int lastPrimeNumberPrinted) {
 /*
  * This function implements the Round Robin Scheduler Algorithm
  */
-
 void roundRobinScheduler(struct pcb processControlBlocks[4]) {
 
     int lastPrimeNumberPrinted = 0;
     int completedProcesses = 0;
     int i;
-    //fopen("output.txt", "a");
 
     while (1) {
         for(i = 0; i <= 4; i = (i + 1) % 4) {
@@ -207,6 +209,7 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]) {
             }
 
         }
+        // Our work here is done.
         printf("\nALL PROCESSES COMPLETE.");
         fprintf(output, "\nALL PROCESSES COMPLETE.");
         break;
