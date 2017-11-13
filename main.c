@@ -25,11 +25,14 @@ struct pcb {
 struct pcb processControlBlocks[4];
 
 // Output file
-FILE * output;
+FILE *output;
 
 void readProcessControlBlocks();
+
 int isPrime(int n);
+
 int getNextPrimeNumberAfter(int n);
+
 void roundRobinScheduler(struct pcb processControlBlocks[4]);
 
 
@@ -39,8 +42,7 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]);
 int main() {
 
     output = fopen("output.txt", "a");
-    if (output == NULL)
-    {
+    if (output == NULL) {
         printf("\nError opening output file.");
     }
 
@@ -73,7 +75,7 @@ int main() {
 void readProcessControlBlocks() {
 
     // Point to the file containing the PCBs
-    FILE * fp;
+    FILE *fp;
 
 
     int currentLine = 0;
@@ -82,7 +84,7 @@ void readProcessControlBlocks() {
     //  Open our file containing the PCBs and read them
     if (fp = fopen("processes.txt", "r")) {
 
-        while ( (fgets(tempLine, sizeof(tempLine), fp) != EOF) && currentLine < 4 ) {
+        while ((fgets(tempLine, sizeof(tempLine), fp) != EOF) && currentLine < 4) {
             sscanf(tempLine, "%d %s %d %d %d", &processControlBlocks[currentLine].processId,
                    processControlBlocks[currentLine].processState, &processControlBlocks[currentLine].processLocation,
                    &processControlBlocks[currentLine].processPriority, &processControlBlocks[currentLine].processTime);
@@ -91,8 +93,7 @@ void readProcessControlBlocks() {
             fprintf(output, "\nProcess %s", tempLine);
             currentLine++;
         }
-    }
-    else {
+    } else {
         printf("\nERROR: Could not open file.\n");
         fprintf(output, "\nERROR: Could not open file.\n");
         return;
@@ -109,16 +110,15 @@ int isPrime(int n) {
     int i; // loop variable
     int num_of_factors = 0; // A number is considered prime if it has 2 factors.
 
-    for( i = 1; i <= n; i += 1 ) {
+    for (i = 1; i <= n; i += 1) {
         if (n % i == 0) {
             num_of_factors++;
         }
     }
 
-    if ( num_of_factors == 2 ) {
+    if (num_of_factors == 2) {
         return 1; // Yes, n is a prime number.
-    }
-    else {
+    } else {
         return 0; // No, n is not a prime number.
     }
 }
@@ -128,10 +128,10 @@ int isPrime(int n) {
  This function gets the next prime number after n.
  */
 int getNextPrimeNumberAfter(int n) {
-    int next = n+1; // The number after n
+    int next = n + 1; // The number after n
 
     // If the next number is not prime, go to the next integer.
-    while (isPrime(next) != 1 ) {
+    while (isPrime(next) != 1) {
         next++;
     }
 
@@ -177,10 +177,10 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]) {
     int i;
 
     while (1) {
-        for(i = 0; i <= 4; i = (i + 1) % 4) {
+        for (i = 0; i <= 4; i = (i + 1) % 4) {
 
             // If the process is ready and still has time remaining, run that process.
-            if ( processControlBlocks[i].processTime != 0 ) {
+            if (processControlBlocks[i].processTime != 0) {
                 // Run the process
                 printf("\nPROCESS %d BEGINS", processControlBlocks[i].processId);
                 fprintf(output, "\nPROCESS %d BEGINS", processControlBlocks[i].processId);
@@ -191,20 +191,19 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]) {
             }
 
             // Determine whether the process is finished or has more time to run
-            if ( (processControlBlocks[i].processTime == 0) &&
-                    (processControlBlocks[i].processState != "Terminated") )  {
+            if ((processControlBlocks[i].processTime == 0) &&
+                (processControlBlocks[i].processState != "Terminated")) {
                 printf("\nPROCESS %d IS FINISHED", processControlBlocks[i].processId);
                 fprintf(output, "\nPROCESS %d IS FINISHED", processControlBlocks[i].processId);
                 strcpy(processControlBlocks[i].processState, "Terminated");
                 completedProcesses++;
-            }
-            else if ( processControlBlocks[i].processTime > 0 ) {
+            } else if (processControlBlocks[i].processTime > 0) {
                 printf("\nPROCESS %d IS PAUSED", processControlBlocks[i].processId);
                 fprintf(output, "\nPROCESS %d IS PAUSED", processControlBlocks[i].processId);
             }
 
             // If all processes are complete. Exit the loop.
-            if ( completedProcesses == 4 ) {
+            if (completedProcesses == 4) {
                 break;
             }
 
