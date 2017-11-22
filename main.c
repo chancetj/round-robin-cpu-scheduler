@@ -8,7 +8,6 @@
  * FILE         :   main.c
  */
 
-
 #include <stdio.h>
 #include <string.h>
 
@@ -39,6 +38,7 @@ void roundRobinScheduler(struct pcb processControlBlocks[4]);
 /*
  Main function
  */
+
 int main() {
 
     output = fopen("output.txt", "a");
@@ -72,6 +72,7 @@ int main() {
 /*
  This function reads the text file to get information about the PCBs
  */
+
 void readProcessControlBlocks() {
 
     // Point to the file containing the PCBs
@@ -106,6 +107,7 @@ void readProcessControlBlocks() {
 /*
  This function checks to see if a number, n, is prime or not.
  */
+
 int isPrime(int n) {
     int i; // loop variable
     int num_of_factors = 0; // A number is considered prime if it has 2 factors.
@@ -127,6 +129,7 @@ int isPrime(int n) {
 /*
  This function gets the next prime number after n.
  */
+
 int getNextPrimeNumberAfter(int n) {
     int next = n + 1; // The number after n
 
@@ -147,6 +150,7 @@ int getNextPrimeNumberAfter(int n) {
  It will take in the last prime number that was printed and it will return
  the last prime number that it prints.
  */
+
 int printPrimeNumbers(int lastPrimeNumberPrinted) {
 
     int numberOfPrimesPrinted;
@@ -170,6 +174,7 @@ int printPrimeNumbers(int lastPrimeNumberPrinted) {
 /*
  * This function implements the Round Robin Scheduler Algorithm
  */
+
 void roundRobinScheduler(struct pcb processControlBlocks[4]) {
 
     int lastPrimeNumberPrinted = 0;
